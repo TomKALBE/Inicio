@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { computed, reactive, ref, type Ref } from 'vue'
+import { computed, reactive, ref, watch, type Ref } from 'vue'
+import { usePagination } from './usePagination'
 export interface Movie {
     adult: boolean
     backdrop_path: string
@@ -25,11 +26,21 @@ interface Sort {
 const movies: Ref<Movie[]> = ref([]) 
 const error: Ref<Error | null> = ref(null)
 const isLoading: Ref<boolean> = ref(false)
+const pageAlreadyFetched: Ref = ref(0)
+
 const sort: Sort = reactive({
     timeFrame: 'day',
     rating: null
 })
+const { pagination, nextPage } = usePagination()
+
 export function useMovie() {
+
+    watch(pagination, () => {
+        if (!isLoading.value && pagination.page * pagination.perPage > movies.value.length) {
+            getMovies()
+        }
+    })
 
     const getMovies = async () => {
         try{
@@ -37,16 +48,20 @@ export function useMovie() {
             const totalPagesToLoad = 3
             const newMovies: Movie[] = []
 
-            for (let i = 1; i <= totalPagesToLoad; i++) {
+            for (let i = pageAlreadyFetched.value + 1; i <= pageAlreadyFetched.value + totalPagesToLoad; i++) {
                 const { data } = await axios.get(
                     `https://api.themoviedb.org/3/trending/movie/${sort.timeFrame}?page=${i}`
                 )
+                pagination.totalPages = data.total_pages
                 newMovies.push(...data.results)
             }
             movies.value.push(...newMovies)
+            pageAlreadyFetched.value += totalPagesToLoad
         }catch(err){
             console.log(err)
             error.value = err as Error
+        }finally{
+            isLoading.value = false
         }
     }
 
@@ -69,7 +84,7 @@ export function useMovie() {
     }
 
     const sortedMovies = computed(() => {
-        const moviesToSort = [...movies.value.slice(0, 50)]
+        const moviesToSort = [...movies.value.slice(0, pagination.page * pagination.perPage)]
         if (sort.rating === 'asc') {
             return moviesToSort.sort((a, b) => a.vote_average - b.vote_average)
         } else if (sort.rating === 'desc') {
@@ -88,9 +103,11 @@ export function useMovie() {
         isLoading: computed(() => isLoading.value),
         error,
         sort,
+        pagination: computed(() => pagination),
         getMovies,
         sortByTimeFrame,
         sortByRating,
-        clearSort
+        clearSort,
+        nextPage
     }
 }

@@ -2,7 +2,7 @@
 import { useMovie } from '@/composables/useMovie';
 import MovieItem from '@/components/MovieItem.vue'
 import Loading from './Loading.vue';
-const { getMovies, movies, isLoading, error } = useMovie()
+const { getMovies, nextPage, movies, isLoading, error, pagination } = useMovie()
 getMovies()
 
 </script>
@@ -15,7 +15,11 @@ getMovies()
                 <MovieItem :movie="movie" :index="index" />
             </template>
         </div>
+
         <small v-if="error" class="text-rose-600">{{ error.message }}</small>
         <Loading v-if="isLoading" class="mt-10" />
+        <div v-else-if="pagination.page < pagination.totalPages" class="py-5 flex-center">
+            <button @click.prevent="nextPage" class="p-2 btn-primary text-white font-bold">Load more</button>
+        </div>
     </div>
 </template>
