@@ -3,7 +3,11 @@ import { useMovie } from '@/composables/useMovie'
 import IconDownArrow from './icons/IconDownArrow.vue';
 import IconUpArrow from './icons/IconUpArrow.vue';
 import IconXMark from './icons/IconXMark.vue';
+import router from '@/router';
+import { computed } from 'vue';
 const { sortByTimeFrame, sortByRating, clearSort, sort } = useMovie()
+
+const currentPage = computed(() => router.currentRoute.value.name);
 
 </script>
 <template>
@@ -11,11 +15,11 @@ const { sortByTimeFrame, sortByRating, clearSort, sort } = useMovie()
         <div class="flex flex-col h-full items-start justify-between p-3 xs:flex-row xs:items-center ">
         
         <h1 class="font-bold text-xl xs:text-base md:text-2xl text-white">Help me find a movie</h1>
-        <div class="flex space-x-5 mt-7 xs:mt-0">
-            <div class="btn-secondary">
+        <div v-if="currentPage === 'home'" class="flex space-x-5 mt-7 xs:mt-0">
+            <div class="btn-primary">
                 <button
                     @click="sortByRating"
-                    class="flex-center font-bold btn-primary"
+                    class="flex-center font-bold"
                 >
                     <div
                         v-if="sort.rating !== null"
@@ -29,10 +33,10 @@ const { sortByTimeFrame, sortByRating, clearSort, sort } = useMovie()
                     <IconUpArrow class="ml-1 text-rose-600" v-else />
                 </button>
             </div>
-            <div class="btn-secondary">
+            <div class="btn-primary">
                 <button
                     @click="sortByTimeFrame"
-                    class="font-bold btn-primary"
+                    class="font-bold"
                 >
                     Trend by: {{ sort.timeFrame === 'day' ? 'Week' : 'Day' }}
                 </button>

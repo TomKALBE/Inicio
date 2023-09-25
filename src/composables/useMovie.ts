@@ -35,6 +35,7 @@ const sort: Sort = reactive({
 const { pagination, nextPage } = usePagination()
 
 export function useMovie() {
+    const movie: Ref<Movie | null> = ref(null)
 
     watch(pagination, () => {
         if (!isLoading.value && pagination.page * pagination.perPage > movies.value.length) {
@@ -61,6 +62,18 @@ export function useMovie() {
             console.log(err)
             error.value = err as Error
         }finally{
+            isLoading.value = false
+        }
+    }
+
+    const getMovieById = async (id: string) => {
+        try {
+            isLoading.value = true
+            const { data } = await axios.get(`https://api.themoviedb.org/3/movie/${id}`)
+            movie.value = data
+        } catch (err) {
+            error.value = err as Error
+        } finally {
             isLoading.value = false
         }
     }
@@ -100,14 +113,17 @@ export function useMovie() {
 
     return {
         movies: sortedMovies,
+        movie: computed(() => movie.value),
         isLoading: computed(() => isLoading.value),
         error,
         sort,
         pagination: computed(() => pagination),
+        getMovieById,
         getMovies,
         sortByTimeFrame,
         sortByRating,
         clearSort,
-        nextPage
+        nextPage,
+
     }
 }

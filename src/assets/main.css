@@ -5,7 +5,13 @@
 .flex-center {
     @apply flex items-center justify-center;
 }
+.btn-animation {
+    @apply hover:scale-110 duration-300 cursor-pointer;
+}
 
 .btn-primary {
-    @apply text-rose-600 bg-slate-100 border-2 border-rose-500 px-2 py-1 rounded-md active:bg-slate-300 hover:scale-110 duration-300 cursor-pointer
+    @apply text-rose-600 bg-slate-100 border-2 border-rose-500 px-2 py-1 rounded-md active:bg-slate-300 btn-animation;
+}
+.btn-secondary {
+    @apply bg-rose-600 rounded-md  hover:bg-rose-500 active:bg-rose-700 px-2 py-1 text-white btn-animation;
 }

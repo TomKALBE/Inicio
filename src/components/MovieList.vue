@@ -2,6 +2,7 @@
 import { useMovie } from '@/composables/useMovie';
 import MovieItem from '@/components/MovieItem.vue'
 import Loading from './Loading.vue';
+import router from '@/router'
 const { getMovies, nextPage, movies, isLoading, error, pagination } = useMovie()
 getMovies()
 
@@ -12,7 +13,7 @@ getMovies()
      
         <div class="mt-5 grid gap-10 xl:grid-cols-8 lg:grid-cols-6 md:grid-cols-5 sm:grid-cols-4 grid-cols-3">
             <template v-for="(movie, index) in movies" :key="movie.id + '-' +  index">
-                <MovieItem :movie="movie" :index="index" />
+                <MovieItem :movie="movie" :index="index" @click="router.push(`/movie/${movie.id}/${movie.title}`)" />
             </template>
         </div>
 
