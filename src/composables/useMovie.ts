@@ -85,6 +85,7 @@ export function useMovie() {
             sort.timeFrame = 'day'
         }
         movies.value = []
+        pageAlreadyFetched.value = 0
         getMovies()
     }
 
