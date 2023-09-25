@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useMovie } from '@/composables/useMovie';
 import MovieItem from '@/components/MovieItem.vue'
-const { getMovies, movies, error } = useMovie()
+import Loading from './Loading.vue';
+const { getMovies, movies, isLoading, error } = useMovie()
 getMovies()
 
 </script>
@@ -15,5 +16,6 @@ getMovies()
             </template>
         </div>
         <small v-if="error" class="text-rose-600">{{ error.message }}</small>
+        <Loading v-if="isLoading" class="mt-10" />
     </div>
 </template>

@@ -85,6 +85,7 @@ export function useMovie() {
 
     return {
         movies: sortedMovies,
+        isLoading: computed(() => isLoading.value),
         error,
         sort,
         getMovies,
