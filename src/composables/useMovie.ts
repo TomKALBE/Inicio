@@ -18,14 +18,16 @@ export interface Movie {
     vote_count: number
 }
 interface Sort {
-    timeFrame: 'day' | 'week'
+    timeFrame: 'day' | 'week',
+    rating: 'asc' | 'desc' | null
 }
 
 const movies: Ref<Movie[]> = ref([]) 
 const error: Ref<Error | null> = ref(null)
 const isLoading: Ref<boolean> = ref(false)
 const sort: Sort = reactive({
-    timeFrame: 'day'
+    timeFrame: 'day',
+    rating: null
 })
 export function useMovie() {
 
@@ -57,11 +59,37 @@ export function useMovie() {
         movies.value = []
         getMovies()
     }
+
+    const sortByRating = () => {
+        if (sort.rating === 'desc') {
+            sort.rating = 'asc'
+        } else {
+            sort.rating = 'desc'
+        }
+    }
+
+    const sortedMovies = computed(() => {
+        const moviesToSort = [...movies.value.slice(0, 50)]
+        if (sort.rating === 'asc') {
+            return moviesToSort.sort((a, b) => a.vote_average - b.vote_average)
+        } else if (sort.rating === 'desc') {
+            return moviesToSort.sort((a, b) => b.vote_average - a.vote_average)
+        } else {
+            return moviesToSort
+        }
+    })
+
+    const clearSort = () => {
+        sort.rating = null
+    }
+
     return {
-        movies: computed(() => movies.value.slice(0, 50)),
+        movies: sortedMovies,
         error,
         sort,
         getMovies,
-        sortByTimeFrame
+        sortByTimeFrame,
+        sortByRating,
+        clearSort
     }
 }
