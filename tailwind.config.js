@@ -6,6 +6,9 @@ export default {
     ],
     theme: {
       extend: {
+        screens: {
+            'xs' : '520px'
+        },
       },
     },
     plugins: [],
